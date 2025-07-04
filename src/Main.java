@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Scanner;
 
 public class Main {
@@ -43,8 +44,45 @@ public class Main {
                     System.out.println(">>bit");
                     Bitwise.bitHalf(inFile, outFile);
                     break;
+                case "test":
+                    System.out.print(">>bitwise test value:");
+                    String a = scanner.nextLine();
+                    int aa = 0;
+                    try
+                    {
+                        aa = Integer.parseInt(a);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    printInt(aa);
+                    System.out.println("shifted right 1:");
+                    printInt(aa >> 1);
+                    System.out.println("shifted right 16 no mask");
+                    printInt(aa >> 16);
+                    System.out.println("AND 0xFF:");
+                    printInt(aa  & 0xFF );
+                    System.out.println("OR 0xFF:");
+                    printInt(aa | 0xFF);
+                    break;
+            }
+            try
+            {
+                Thread.sleep(250);
+            }
+            catch (Exception e)
+            {
+                //do nothing.
             }
         }
 
+    }
+
+    private static void printInt(int a)
+    {
+        System.out.print(String.format("%32s", Integer.toBinaryString(a)).replace(' ', '0'));
+        System.out.print(" : ");
+        System.out.println(a);
     }
 }

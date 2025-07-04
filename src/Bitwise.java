@@ -28,10 +28,9 @@ public class Bitwise {
         {
             for (int y = 0; y < before.getHeight(); y++)
             {
-
                 if (x < before.getWidth() / 2)
                 {
-                    after.setRGB(x,y,transformBlueToRed(before.getRGB(x,y)));
+                    after.setRGB(x,y,transformStrongerReds(before.getRGB(x,y)));
                 }
                 else
                 {
@@ -55,7 +54,6 @@ public class Bitwise {
         return in + 5000;
     }
 
-
     //format:  32 bit int > A R G B:  8,8,8,8
     private static int transformBlueToRed(int in)
     {
@@ -67,5 +65,17 @@ public class Bitwise {
     {
         System.out.println(Integer.toBinaryString(in));
         return in << 8;
+    }
+
+    private static int transformStrongerReds(int in)
+    {
+        System.out.println(Integer.toBinaryString(in));
+        int redOnly = (in >> 16) & 0xFF;
+        redOnly = Math.min(redOnly + 50, 255);
+        redOnly = redOnly << 16;
+        int stripRed = in & 0xFF00_FFFF;
+        int output = redOnly | stripRed;
+        System.out.println(Integer.toBinaryString(output));
+        return output;
     }
 }
