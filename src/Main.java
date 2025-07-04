@@ -27,6 +27,8 @@ public class Main {
                     inFile = new File(path);
                     outFile = new File(outputFolder + "/" + targetName + ".png");
                     System.out.println(">> input file exists: " + inFile.exists());
+                    System.out.println(">> output file:" + outFile.getAbsolutePath());
+
                     try
                     {
                         System.out.println(">> output file create: " + outFile.createNewFile());
@@ -39,7 +41,7 @@ public class Main {
                     break;
                 case "bit":
                     System.out.println(">>bit");
-                    Bitwise.bit(inFile, outFile);
+                    Bitwise.bitHalf(inFile, outFile);
                     break;
             }
         }
