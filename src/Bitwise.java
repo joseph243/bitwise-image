@@ -71,7 +71,7 @@ public class Bitwise {
     {
         System.out.println(Integer.toBinaryString(in));
         int redOnly = (in >> 16) & 0xFF;
-        redOnly = Math.min(redOnly + 50, 255);
+        redOnly = Math.min(redOnly + 150, 255);
         redOnly = redOnly << 16;
         int stripRed = in & 0xFF00_FFFF;
         int output = redOnly | stripRed;

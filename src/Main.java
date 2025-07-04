@@ -23,7 +23,7 @@ public class Main {
                 case "load":
                     System.out.print(">> new file name? ");
                     String targetName = scanner.nextLine();
-                    String path = "/home/joe/Pictures/memes/us.png";
+                    String path = "/home/joe/Pictures/land2024/camp4.JPG";
                     System.out.println(">> input file:" + path);
                     inFile = new File(path);
                     outFile = new File(outputFolder + "/" + targetName + ".png");
