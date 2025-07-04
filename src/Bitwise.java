@@ -30,7 +30,7 @@ public class Bitwise {
             {
                 if (x < before.getWidth() / 2)
                 {
-                    after.setRGB(x,y,transformStrongerReds(before.getRGB(x,y)));
+                    after.setRGB(x,y,transformRscale(before.getRGB(x,y)));
                 }
                 else
                 {
@@ -77,5 +77,10 @@ public class Bitwise {
         int output = redOnly | stripRed;
         System.out.println(Integer.toBinaryString(output));
         return output;
+    }
+
+    private static int transformRscale(int in)
+    {
+        return (in & 0x00FF0000) << 4;
     }
 }
