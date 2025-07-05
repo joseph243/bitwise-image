@@ -11,6 +11,9 @@ public class ImageEditor {
     private final String STRONGERREDS = "Stronger Reds";
     private final String GRAYSCALE = "Grayscale";
     private final String INTENSIFY = "Intensify";
+    private final String SWITCHRB = "Switch RB";
+    private final String SWITCHRG = "Switch RG";
+    private final String SWITCHGB = "Switch GB";
 
     private ArrayList<String> selectedTransformations;
 
@@ -23,6 +26,9 @@ public class ImageEditor {
         transformations.add(BLUETORED);
         transformations.add(ADDFIVETHOUSAND);
         transformations.add(INTENSIFY);
+        transformations.add(SWITCHGB);
+        transformations.add(SWITCHRB);
+        transformations.add(SWITCHRG);
         selectedTransformations = new ArrayList<>();
     }
 
@@ -74,6 +80,26 @@ public class ImageEditor {
         return output;
     }
 
+    public BufferedImage full(BufferedImage image)
+    {
+        BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < image.getWidth(); x++)
+        {
+            for (int y = 0; y < image.getHeight(); y++)
+            {
+                int before = image.getRGB(x,y);
+                int after = doAllSelectedTransformations(before);
+                output.setRGB(x,y,after);
+                if (Main.isDebugMode())
+                {
+                    Main.printInt(before);
+                    Main.printInt(after);
+                }
+            }
+        }
+        return output;
+    }
+
     private int doAllSelectedTransformations(int in)
     {
         for (String t : selectedTransformations)
@@ -97,6 +123,15 @@ public class ImageEditor {
                     break;
                 case INTENSIFY:
                     in = transformIntensify(in);
+                    break;
+                case SWITCHRB:
+                    in = transformSwitchRB(in);
+                    break;
+                case SWITCHRG:
+                    in = transformSwitchRG(in);
+                    break;
+                case SWITCHGB:
+                    in = transformSwitchGB(in);
                     break;
             }
         }
@@ -145,7 +180,39 @@ public class ImageEditor {
         r = Math.min(r + 50, 255);
         g = Math.min(g + 50, 255);
         b = Math.min(b + 50, 255);
-        int gray = (r + g + b) / 3;
         return (0xFF << 24) | (r << 16) | (g << 8) | (b);
+    }
+
+    private static int transformSwitchRG(int in)
+    {
+        int r = (in >> 16) & 0xFF;
+        int g = (in >> 8) & 0xFF;
+        int b = in & 0xFF;
+        r = Math.min(r + 50, 255);
+        g = Math.min(g + 50, 255);
+        b = Math.min(b + 50, 255);
+        return (0xFF << 24) | (g << 16) | (r << 8) | (b);
+    }
+
+    private static int transformSwitchRB(int in)
+    {
+        int r = (in >> 16) & 0xFF;
+        int g = (in >> 8) & 0xFF;
+        int b = in & 0xFF;
+        r = Math.min(r + 50, 255);
+        g = Math.min(g + 50, 255);
+        b = Math.min(b + 50, 255);
+        return (0xFF << 24) | (b << 16) | (g << 8) | (r);
+    }
+
+    private static int transformSwitchGB(int in)
+    {
+        int r = (in >> 16) & 0xFF;
+        int g = (in >> 8) & 0xFF;
+        int b = in & 0xFF;
+        r = Math.min(r + 50, 255);
+        g = Math.min(g + 50, 255);
+        b = Math.min(b + 50, 255);
+        return (0xFF << 24) | (r << 16) | (b << 8) | (g);
     }
 }

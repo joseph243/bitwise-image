@@ -86,6 +86,20 @@ public class Main {
                         System.out.println("no image is loaded!  use 'load' command.");
                     }
                     break;
+                case "full":
+                    if (imageLoaded)
+                    {
+                        System.out.println(">> starting 'full' transform.");
+                        selectTransformations();
+                        image = editor.full(image);
+                        transformed = true;
+                        System.out.println(">> 'full' transform complete.");
+                    }
+                    else
+                    {
+                        System.out.println("no image is loaded!  use 'load' command.");
+                    }
+                    break;
                 case "t":
                     testNumbers();
                     break;
@@ -97,13 +111,18 @@ public class Main {
                     transformed = false;
                     System.out.println(">> data erased, app reset to new launch.");
                     break;
+                case "list":
+                    editor.listAvailableTransformations();
+                    break;
                 default:
                     System.out.println("available commands:");
                     System.out.println("t : test integers.");
                     System.out.println("half: begin half image transform.");
+                    System.out.println("full: begin full image transform.");
                     System.out.println("load: load image to be transformed.");
                     System.out.println("save: save transformed image to disk.");
                     System.out.println("debug: toggle debug mode.");
+                    System.out.println("list: list available transformations.");
                     System.out.println("reset: erase all changes and start over.");
                     System.out.println("q, quit, x, exit: Quit this application.");
                     break;
