@@ -93,6 +93,8 @@ public class Main {
                     image = null;
                     editor = new ImageEditor();
                     debugMode = false;
+                    saved = false;
+                    transformed = false;
                     System.out.println(">> data erased, app reset to new launch.");
                     break;
                 default:

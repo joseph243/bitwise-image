@@ -10,6 +10,7 @@ public class ImageEditor {
     private final String BLUETOGREEN = "Blue to Green";
     private final String STRONGERREDS = "Stronger Reds";
     private final String GRAYSCALE = "Grayscale";
+    private final String INTENSIFY = "Intensify";
 
     private ArrayList<String> selectedTransformations;
 
@@ -21,6 +22,7 @@ public class ImageEditor {
         transformations.add(BLUETOGREEN);
         transformations.add(BLUETORED);
         transformations.add(ADDFIVETHOUSAND);
+        transformations.add(INTENSIFY);
         selectedTransformations = new ArrayList<>();
     }
 
@@ -93,6 +95,9 @@ public class ImageEditor {
                 case GRAYSCALE:
                     in = transformGrayscale(in);
                     break;
+                case INTENSIFY:
+                    in = transformIntensify(in);
+                    break;
             }
         }
         return in;
@@ -130,5 +135,17 @@ public class ImageEditor {
         int b = in & 0xFF;
         int gray = (r + g + b) / 3;
         return (gray << 24) | (gray << 16) | (gray << 8) | (gray);
+    }
+
+    private static int transformIntensify(int in)
+    {
+        int r = (in >> 16) & 0xFF;
+        int g = (in >> 8) & 0xFF;
+        int b = in & 0xFF;
+        r = Math.min(r + 50, 255);
+        g = Math.min(g + 50, 255);
+        b = Math.min(b + 50, 255);
+        int gray = (r + g + b) / 3;
+        return (0xFF << 24) | (r << 16) | (g << 8) | (b);
     }
 }
