@@ -6,12 +6,17 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static BufferedImage image = null;
+    private static ImageEditor editor;
+    private static boolean debugMode = false;
 
     public static void main(String[] args) {
         boolean running = true;
         boolean saved = false;
         boolean transformed = false;
+        editor = new ImageEditor();
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("~~Bitwise Image Editor~~");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 
         while (running) {
             boolean imageLoaded = (image != null);
@@ -27,14 +32,10 @@ public class Main {
             {
                 System.out.print("~~image saved~~");
             }
-            System.out.println();
             System.out.print("enter command:");
             String input = scanner.nextLine();
             switch (input) {
-                case "q":
-                case "quit":
-                case "x":
-                case "exit":
+                case "q", "quit", "x", "exit":
                     if (imageLoaded && !saved)
                     {
                         System.out.print(">> Warning!!! Unsaved Work.  Really quit?  y/n: ");
@@ -54,15 +55,31 @@ public class Main {
                 case "load":
                     loadImage();
                     break;
+                case "debug":
+                    debugMode = !debugMode;
+                    if (debugMode)
+                    {
+                        System.out.println("Debug Mode ON.");
+                    }
+                    break;
                 case "save":
-                    saved = saveImage();
+                    if (imageLoaded)
+                    {
+                        saved = saveImage();
+                    }
+                    else
+                    {
+                        System.out.println("no image is loaded!  use 'load' command.");
+                    }
                     break;
                 case "half":
                     if (imageLoaded)
                     {
-                        System.out.println(">> running 'half' transform.");
-                        image = ImageEditor.half(image);
+                        System.out.println(">> starting 'half' transform.");
+                        selectTransformations();
+                        image = editor.half(image);
                         transformed = true;
+                        System.out.println(">> 'half' transform complete.");
                     }
                     else
                     {
@@ -71,6 +88,22 @@ public class Main {
                     break;
                 case "t":
                     testNumbers();
+                    break;
+                case "reset":
+                    image = null;
+                    editor = new ImageEditor();
+                    debugMode = false;
+                    System.out.println(">> data erased, app reset to new launch.");
+                    break;
+                default:
+                    System.out.println("available commands:");
+                    System.out.println("t : test integers.");
+                    System.out.println("half: begin half image transform.");
+                    System.out.println("load: load image to be transformed.");
+                    System.out.println("save: save transformed image to disk.");
+                    System.out.println("debug: toggle debug mode.");
+                    System.out.println("reset: erase all changes and start over.");
+                    System.out.println("q, quit, x, exit: Quit this application.");
                     break;
             }
             try
@@ -83,6 +116,22 @@ public class Main {
             }
         }
 
+    }
+
+    private static void selectTransformations()
+    {
+        String input = "";
+        System.out.println("selecting transformations.  type names from this list, or 'done' to continue: ");
+        editor.listAvailableTransformations();
+        while (!input.equalsIgnoreCase("done"))
+        {
+            System.out.print(">> add transformation: ");
+            input = scanner.nextLine();
+            if (!input.equalsIgnoreCase("done"))
+            {
+                editor.selectTransformation(input);
+            }
+        }
     }
 
     private static void testNumbers() {
@@ -177,10 +226,15 @@ public class Main {
         return false;
     }
 
-    private static void printInt(int a)
+    public static void printInt(int a)
     {
         System.out.print(String.format("%32s", Integer.toBinaryString(a)).replace(' ', '0'));
         System.out.print(" : ");
         System.out.println(a);
+    }
+
+    public static boolean isDebugMode()
+    {
+        return debugMode;
     }
 }
