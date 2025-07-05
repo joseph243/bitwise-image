@@ -54,6 +54,7 @@ public class Main {
                     break;
                 case "load":
                     loadImage();
+                    saved = false;
                     break;
                 case "debug":
                     debugMode = !debugMode;
@@ -71,6 +72,11 @@ public class Main {
                     {
                         System.out.println("no image is loaded!  use 'load' command.");
                     }
+                    if (saved)
+                    {
+                        System.out.println("Save Image Success!  Image remains in buffer for further changes.");
+                        System.out.println("Use 'reset' to clear buffer.");
+                    }
                     break;
                 case "half":
                     if (imageLoaded)
@@ -79,6 +85,7 @@ public class Main {
                         selectTransformations();
                         image = editor.half(image);
                         transformed = true;
+                        saved = false;
                         System.out.println(">> 'half' transform complete.");
                     }
                     else
@@ -93,7 +100,22 @@ public class Main {
                         selectTransformations();
                         image = editor.full(image);
                         transformed = true;
+                        saved = false;
                         System.out.println(">> 'full' transform complete.");
+                    }
+                    else
+                    {
+                        System.out.println("no image is loaded!  use 'load' command.");
+                    }
+                    break;
+                case "chaos":
+                    if (imageLoaded)
+                    {
+                        System.out.println(">> starting 'chaos' transform.");
+                        image = editor.fullChaos(image);
+                        transformed = true;
+                        saved = false;
+                        System.out.println(">> 'chaos' transform complete.");
                     }
                     else
                     {
@@ -119,6 +141,7 @@ public class Main {
                     System.out.println("t : test integers.");
                     System.out.println("half: begin half image transform.");
                     System.out.println("full: begin full image transform.");
+                    System.out.println("chaos: begin full chaos image transform.");
                     System.out.println("load: load image to be transformed.");
                     System.out.println("save: save transformed image to disk.");
                     System.out.println("debug: toggle debug mode.");
@@ -232,8 +255,7 @@ public class Main {
         boolean result = false;
         try
         {
-            System.out.println(">> output file create: " + outFile.createNewFile());
-            result = ImageIO.write(image, "png", outFile);
+            result = outFile.createNewFile() && ImageIO.write(image, "png", outFile);
         }
         catch (Exception e)
         {

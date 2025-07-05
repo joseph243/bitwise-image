@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class ImageEditor {
@@ -98,6 +99,35 @@ public class ImageEditor {
             }
         }
         return output;
+    }
+
+    public BufferedImage fullChaos(BufferedImage image)
+    {
+        BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < image.getWidth(); x++)
+        {
+            for (int y = 0; y < image.getHeight(); y++)
+            {
+                int before = image.getRGB(x,y);
+                int after = doRandomTransformation(before);
+                output.setRGB(x,y,after);
+                if (Main.isDebugMode())
+                {
+                    Main.printInt(before);
+                    Main.printInt(after);
+                }
+            }
+        }
+        return output;
+    }
+
+    private int doRandomTransformation(int in)
+    {
+        Random r = new Random();
+        int random = r.nextInt(transformations.size());
+        selectedTransformations.clear();
+        selectedTransformations.add(transformations.get(random));
+        return doAllSelectedTransformations(in);
     }
 
     private int doAllSelectedTransformations(int in)
