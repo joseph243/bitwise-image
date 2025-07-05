@@ -1,52 +1,31 @@
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
 
 
-public class Bitwise {
+public class ImageEditor {
 
-    private Bitwise()
+    private ImageEditor()
     {
 
     }
 
-    public static void bitHalf(File inFile, File targetFile)
+    public static BufferedImage half(BufferedImage image)
     {
-        System.out.println("~~ bitwise working bit...");
-        BufferedImage after = null;
-        BufferedImage before = null;
-        try
+        BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < image.getWidth(); x++)
         {
-            before = ImageIO.read(inFile);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        after = new BufferedImage(before.getWidth(), before.getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < before.getWidth(); x++)
-        {
-            for (int y = 0; y < before.getHeight(); y++)
+            for (int y = 0; y < image.getHeight(); y++)
             {
-                if (x < before.getWidth() / 2)
+                if (x < image.getWidth() / 2)
                 {
-                    after.setRGB(x,y,transformRscale(before.getRGB(x,y)));
+                    output.setRGB(x,y,transformRscale(image.getRGB(x,y)));
                 }
                 else
                 {
-                    after.setRGB(x,y,before.getRGB(x,y));
+                    output.setRGB(x,y,image.getRGB(x,y));
                 }
-
             }
         }
-        try
-        {
-            ImageIO.write(after, "png", targetFile);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        return output;
     }
 
     private static int transformThou(int in)

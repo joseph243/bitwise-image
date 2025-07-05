@@ -1,70 +1,76 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.OutputStream;
 import java.util.Scanner;
 
 public class Main {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static BufferedImage image = null;
+
     public static void main(String[] args) {
         boolean running = true;
-        Scanner scanner = new Scanner(System.in);
-        String outputFolder = "/home/joe/Pictures/bitwise";
-        File inFile = null;
-        File outFile = null;
-
+        boolean saved = false;
+        boolean transformed = false;
         System.out.println("~~Bitwise Image Editor~~");
+
         while (running) {
+            boolean imageLoaded = (image != null);
+            if (imageLoaded)
+            {
+                System.out.print("~~image loaded~~");
+            }
+            if (transformed)
+            {
+                System.out.print("~~image transformed~~");
+            }
+            if (saved)
+            {
+                System.out.print("~~image saved~~");
+            }
+            System.out.println();
             System.out.print("enter command:");
             String input = scanner.nextLine();
-
             switch (input) {
                 case "q":
-                    running = false;
-                    System.out.println("quitting.");
+                case "quit":
+                case "x":
+                case "exit":
+                    if (imageLoaded && !saved)
+                    {
+                        System.out.print(">> Warning!!! Unsaved Work.  Really quit?  y/n: ");
+                        String confirm = scanner.nextLine();
+                        if (confirm.equalsIgnoreCase("y"))
+                        {
+                            System.out.println(" Changes Discarded.");
+                            running = false;
+                        }
+                    }
+                    else
+                    {
+                        running = false;
+                        System.out.println("quitting.");
+                    }
                     break;
                 case "load":
-                    System.out.print(">> new file name? ");
-                    String targetName = scanner.nextLine();
-                    String path = "/home/joe/Pictures/land2024/camp4.JPG";
-                    System.out.println(">> input file:" + path);
-                    inFile = new File(path);
-                    outFile = new File(outputFolder + "/" + targetName + ".png");
-                    System.out.println(">> input file exists: " + inFile.exists());
-                    System.out.println(">> output file:" + outFile.getAbsolutePath());
-
-                    try
-                    {
-                        System.out.println(">> output file create: " + outFile.createNewFile());
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    System.out.println(">> file load complete.");
+                    loadImage();
                     break;
-                case "bit":
-                    System.out.println(">>bit");
-                    Bitwise.bitHalf(inFile, outFile);
+                case "save":
+                    saved = saveImage();
                     break;
-                case "test":
-                    System.out.print(">>bitwise test value:");
-                    String a = scanner.nextLine();
-                    int aa = 0;
-                    try
+                case "half":
+                    if (imageLoaded)
                     {
-                        aa = Integer.parseInt(a);
+                        System.out.println(">> running 'half' transform.");
+                        image = ImageEditor.half(image);
+                        transformed = true;
                     }
-                    catch (Exception e)
+                    else
                     {
-                        e.printStackTrace();
+                        System.out.println("no image is loaded!  use 'load' command.");
                     }
-                    printInt(aa);
-                    System.out.println("shifted right 1:");
-                    printInt(aa >> 1);
-                    System.out.println("shifted right 16 no mask");
-                    printInt(aa >> 16);
-                    System.out.println("AND 0xFF:");
-                    printInt(aa  & 0xFF );
-                    System.out.println("OR 0xFF:");
-                    printInt(aa | 0xFF);
+                    break;
+                case "t":
+                    testNumbers();
                     break;
             }
             try
@@ -77,6 +83,98 @@ public class Main {
             }
         }
 
+    }
+
+    private static void testNumbers() {
+        System.out.print(">>bitwise test value:");
+        String a = scanner.nextLine();
+        int aa = 0;
+        try
+        {
+            aa = Integer.parseInt(a);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        printInt(aa);
+        System.out.println("shifted right 1:");
+        printInt(aa >> 1);
+        System.out.println("shifted right 16 no mask");
+        printInt(aa >> 16);
+        System.out.println("AND 0xFF:");
+        printInt(aa  & 0xFF );
+        System.out.println("OR 0xFF:");
+        printInt(aa | 0xFF);
+    }
+
+    private static void loadImage()
+    {
+        File inFile = null;
+        System.out.print(">> source image? ");
+        String userPath = scanner.nextLine();
+        String path = "";
+        if (userPath.equalsIgnoreCase("t"))
+        {
+            path = "/home/joe/Pictures/memes/us.png";
+        }
+        else
+        {
+            path = userPath;
+        }
+        inFile = new File(path);
+        try
+        {
+            image = ImageIO.read(inFile);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        if (inFile.exists() && image != null)
+        {
+            System.out.println(">> input file exists: " + path);
+            System.out.println(">> load image success: " + image.getWidth() + " x " + image.getHeight() + " pixels.");
+        }
+        else
+        {
+            System.out.println(">> load image failed for : " + path + ". You'll need to run 'load' again to proceed.");
+        }
+    }
+
+    private static boolean saveImage()
+    {
+        String outputFolder = "";
+        System.out.print(">> output folder? ");
+        String userTarget = scanner.nextLine();
+        if (userTarget.equalsIgnoreCase("t"))
+        {
+            outputFolder = "/home/joe/Pictures/bitwise";
+        }
+        else
+        {
+            outputFolder = userTarget;
+        }
+        System.out.print(">> output file name? ");
+        String fileName = scanner.nextLine();
+        File outFile = new File(outputFolder + "/" + fileName + ".png");
+        System.out.println(">> output file:" + outFile.getAbsolutePath());
+        boolean result = false;
+        try
+        {
+            System.out.println(">> output file create: " + outFile.createNewFile());
+            result = ImageIO.write(image, "png", outFile);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        if (result)
+        {
+            System.out.println(">> save image complete at " + outFile.getAbsolutePath());
+            return true;
+        }
+        return false;
     }
 
     private static void printInt(int a)
