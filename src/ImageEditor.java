@@ -54,6 +54,72 @@ public class ImageEditor {
         System.out.println();
     }
 
+    public BufferedImage orify(ArrayList<BufferedImage> inImages)
+    {
+        int xSize = 999999;
+        int ySize = 999999;
+        for (BufferedImage image : inImages)
+        {
+            if (image.getHeight() < ySize)
+            {
+                ySize = image.getHeight();
+            }
+            if (image.getWidth() < xSize)
+            {
+                xSize = image.getWidth();
+            }
+        }
+        BufferedImage output = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < output.getWidth(); x++)
+        {
+            for (int y = 0; y < output.getHeight(); y++)
+            {
+                ArrayList<Integer> pixels = new ArrayList<Integer>();
+                for (BufferedImage image : inImages)
+                {
+                    pixels.add(image.getRGB(x,y));
+                }
+                int after = (pixels.get(0) | pixels.get(1));
+                output.setRGB(x,y,after);
+                //TODO how to bit-OR for N instead of 2 ?
+            }
+        }
+        return output;
+    }
+
+    public BufferedImage andify(ArrayList<BufferedImage> inImages)
+    {
+        int xSize = 999999;
+        int ySize = 999999;
+        for (BufferedImage image : inImages)
+        {
+            if (image.getHeight() < ySize)
+            {
+                ySize = image.getHeight();
+            }
+            if (image.getWidth() < xSize)
+            {
+                xSize = image.getWidth();
+            }
+        }
+        BufferedImage output = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < output.getWidth(); x++)
+        {
+            for (int y = 0; y < output.getHeight(); y++)
+            {
+                ArrayList<Integer> pixels = new ArrayList<Integer>();
+                for (BufferedImage image : inImages)
+                {
+                    pixels.add(image.getRGB(x,y));
+                }
+                int after = (pixels.get(0) & pixels.get(1));
+                output.setRGB(x,y,after);
+                //TODO how to bit-OR for N instead of 2 ?
+            }
+        }
+        return output;
+    }
+
     public BufferedImage half(BufferedImage image)
     {
         BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);

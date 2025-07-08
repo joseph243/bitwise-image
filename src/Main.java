@@ -1,11 +1,14 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static BufferedImage image = null;
+    private static ArrayList<BufferedImage> images;
+    private static ArrayList<String> imagesPaths;
+    private static BufferedImage outputImage;
     private static ImageEditor editor;
     private static boolean debugMode = false;
 
@@ -13,30 +16,17 @@ public class Main {
         boolean running = true;
         boolean saved = false;
         boolean transformed = false;
+        images = new ArrayList<>();
+        imagesPaths = new ArrayList<>();
+        outputImage = null;
         editor = new ImageEditor();
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("~~Bitwise Image Editor~~");
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 
         while (running) {
-            boolean imageLoaded = (image != null);
-            if (imageLoaded)
-            {
-                System.out.print("~~image loaded~~");
-            }
-            if (transformed)
-            {
-                System.out.print("~~image transformed~~");
-            }
-            if (saved)
-            {
-                System.out.print("~~image saved~~");
-            }
-            System.out.print("enter command:");
+            printMenu(images.size(), transformed, saved);
             String input = scanner.nextLine();
             switch (input) {
                 case "q", "quit", "x", "exit":
-                    if (imageLoaded && !saved)
+                    if (!images.isEmpty() && !saved)
                     {
                         System.out.print(">> Warning!!! Unsaved Work.  Really quit?  y/n: ");
                         String confirm = scanner.nextLine();
@@ -52,6 +42,32 @@ public class Main {
                         System.out.println("quitting.");
                     }
                     break;
+                case "orify":
+                    if (images.size() < 2)
+                    {
+                        System.out.println(">>must have 2 images loaded to perform 'OR' on them.");
+                    }
+                    else
+                    {
+                        outputImage = editor.orify(images);
+                        System.out.println(">>OR-ify transformation complete.");
+                        transformed = true;
+                        saved = false;
+                    }
+                    break;
+                case "andify":
+                    if (images.size() < 2)
+                    {
+                        System.out.println(">>must have 2 images loaded to perform 'AND' on them.");
+                    }
+                    else
+                    {
+                        outputImage = editor.andify(images);
+                        System.out.println(">>AND-ify transformation complete.");
+                        transformed = true;
+                        saved = false;
+                    }
+                    break;
                 case "load":
                     loadImage();
                     saved = false;
@@ -64,7 +80,7 @@ public class Main {
                     }
                     break;
                 case "save":
-                    if (imageLoaded)
+                    if (outputImage != null)
                     {
                         saved = saveImage();
                     }
@@ -74,16 +90,18 @@ public class Main {
                     }
                     if (saved)
                     {
+                        images.addFirst(outputImage);
+                        imagesPaths.addFirst("Transformed Image");
                         System.out.println("Save Image Success!  Image remains in buffer for further changes.");
                         System.out.println("Use 'reset' to clear buffer.");
                     }
                     break;
                 case "half":
-                    if (imageLoaded)
+                    if (!images.isEmpty())
                     {
-                        System.out.println(">> starting 'half' transform.");
+                        System.out.println(">> starting 'half' transform on first loaded image.");
                         selectTransformations();
-                        image = editor.half(image);
+                        outputImage = editor.half(images.getFirst());
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'half' transform complete.");
@@ -94,11 +112,11 @@ public class Main {
                     }
                     break;
                 case "full":
-                    if (imageLoaded)
+                    if (!images.isEmpty())
                     {
                         System.out.println(">> starting 'full' transform.");
                         selectTransformations();
-                        image = editor.full(image);
+                        outputImage = editor.full(images.getFirst());
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'full' transform complete.");
@@ -109,10 +127,10 @@ public class Main {
                     }
                     break;
                 case "chaos":
-                    if (imageLoaded)
+                    if (!images.isEmpty())
                     {
                         System.out.println(">> starting 'chaos' transform.");
-                        image = editor.fullChaos(image);
+                        outputImage = editor.fullChaos(images.getFirst());
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'chaos' transform complete.");
@@ -126,7 +144,9 @@ public class Main {
                     testNumbers();
                     break;
                 case "reset":
-                    image = null;
+                    images.clear();
+                    imagesPaths.clear();
+                    outputImage = null;
                     editor = new ImageEditor();
                     debugMode = false;
                     saved = false;
@@ -134,13 +154,21 @@ public class Main {
                     System.out.println(">> data erased, app reset to new launch.");
                     break;
                 case "list":
+                    System.out.println("Loaded Images:");
+                    for (String path : imagesPaths)
+                    {
+                        System.out.println("~~" + path);
+                    }
+                    System.out.println("Available Transformations:");
                     editor.listAvailableTransformations();
                     break;
                 default:
-                    System.out.println("available commands:");
+                    System.out.println("----------------------------------------");
+                    System.out.println("               HELP MENU");
                     System.out.println("t : test integers.");
                     System.out.println("half: begin half image transform.");
                     System.out.println("full: begin full image transform.");
+                    System.out.println("orify: merge 2 images.");
                     System.out.println("chaos: begin full chaos image transform.");
                     System.out.println("load: load image to be transformed.");
                     System.out.println("save: save transformed image to disk.");
@@ -148,6 +176,7 @@ public class Main {
                     System.out.println("list: list available transformations.");
                     System.out.println("reset: erase all changes and start over.");
                     System.out.println("q, quit, x, exit: Quit this application.");
+                    System.out.println("----------------------------------------");
                     break;
             }
             try
@@ -218,16 +247,17 @@ public class Main {
         inFile = new File(path);
         try
         {
-            image = ImageIO.read(inFile);
+            images.add(ImageIO.read(inFile));
+            imagesPaths.add(path);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        if (inFile.exists() && image != null)
+        if (inFile.exists() && !images.isEmpty())
         {
             System.out.println(">> input file exists: " + path);
-            System.out.println(">> load image success: " + image.getWidth() + " x " + image.getHeight() + " pixels.");
+            System.out.println(">> load image success: " + images.getFirst().getWidth() + " x " + images.getFirst().getHeight() + " pixels.");
         }
         else
         {
@@ -255,7 +285,7 @@ public class Main {
         boolean result = false;
         try
         {
-            result = outFile.createNewFile() && ImageIO.write(image, "png", outFile);
+            result = outFile.createNewFile() && ImageIO.write(outputImage, "png", outFile);
         }
         catch (Exception e)
         {
@@ -279,5 +309,29 @@ public class Main {
     public static boolean isDebugMode()
     {
         return debugMode;
+    }
+
+    public static void printMenu(int imageCount, boolean inTransformed, boolean inSaved)
+    {
+        System.out.println("~~Bitwise Image Editor~~");
+        System.out.println("~~~~~" + imageCount + " Images Loaded~~~~");
+        if (inTransformed)
+        {
+            System.out.println("~~Image Is Transformed~~");
+            if (inSaved)
+            {
+                System.out.println("~~~Changes Are Saved!~~~");
+            }
+            else
+            {
+                System.out.println("~~~~~Unsaved Changes~~~~");
+            }
+        }
+        else
+        {
+            System.out.println("~~~~~No Changes Yet~~~~~");
+        }
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.print("enter command: ");
     }
 }
