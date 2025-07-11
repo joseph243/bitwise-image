@@ -1,55 +1,46 @@
+import colorShifts.*;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 public class ImageEditor {
 
-    private ArrayList<String> transformations;
-    private final String ADDFIVETHOUSAND = "Add 5000";
-    private final String BLUETORED = "Blue to Red";
-    private final String BLUETOGREEN = "Blue to Green";
-    private final String STRONGERREDS = "Stronger Reds";
-    private final String GRAYSCALE = "Grayscale";
-    private final String INTENSIFY = "Intensify";
-    private final String SWITCHRB = "Switch RB";
-    private final String SWITCHRG = "Switch RG";
-    private final String SWITCHGB = "Switch GB";
+    private ArrayList<colorShiftBase> selectedTransformations;
 
-    private ArrayList<String> selectedTransformations;
+    private ArrayList<colorShiftBase> availableransformations;
 
     public ImageEditor()
     {
-        transformations = new ArrayList<>();
-        transformations.add(GRAYSCALE);
-        transformations.add(STRONGERREDS);
-        transformations.add(BLUETOGREEN);
-        transformations.add(BLUETORED);
-        transformations.add(ADDFIVETHOUSAND);
-        transformations.add(INTENSIFY);
-        transformations.add(SWITCHGB);
-        transformations.add(SWITCHRB);
-        transformations.add(SWITCHRG);
         selectedTransformations = new ArrayList<>();
+        availableransformations = new ArrayList<>();
+        availableransformations.add(new shiftAddFiveThousand());
+        availableransformations.add(new shiftGreenBlue());
+        availableransformations.add(new shiftGrayscale());
+        availableransformations.add(new shiftIntensify());
+        availableransformations.add(new shiftStrongerBlues());
+        availableransformations.add(new shiftStrongerReds());
+        availableransformations.add(new shiftSwitchRedBlue());
+        availableransformations.add(new shiftSwitchRedGreen());
     }
 
-    public void selectTransformation(String inId)
-    {
-        if (transformations.contains(inId))
+    public void selectTransformation(String inId) {
+        for (colorShiftBase t : availableransformations)
         {
-            selectedTransformations.add(inId);
+            if (t.getName().equalsIgnoreCase(inId))
+            {
+                selectedTransformations.add(t);
+                break;
+            }
         }
-        else
-        {
-            System.out.println(inId + " is not a valid transformation.");
-        }
+        System.out.println(inId + " is not a valid transformation.");
     }
 
     public void listAvailableTransformations()
     {
-        for (String s : transformations)
+        for (colorShiftBase t : availableransformations)
         {
-            System.out.print(s + ", ");
+            System.out.print(t.getName() + ", ");
         }
         System.out.println();
     }
@@ -199,26 +190,20 @@ public class ImageEditor {
     private int doRandomTransformation(int in)
     {
         Random r = new Random();
-        int random = r.nextInt(transformations.size());
+        int random = r.nextInt(availableransformations.size());
         selectedTransformations.clear();
-        selectedTransformations.add(transformations.get(random));
+        selectedTransformations.add(availableransformations.get(random));
         return doAllSelectedTransformations(in);
     }
 
     private int doAllSelectedTransformations(int in)
     {
-        for (String t : selectedTransformations)
+        for (colorShiftBase t : selectedTransformations)
         {
             switch (t)
             {
                 case ADDFIVETHOUSAND:
                     in = transformThou(in);
-                    break;
-                case BLUETORED:
-                    in = transformBlueToRed(in);
-                    break;
-                case BLUETOGREEN:
-                    in = transformBlueToGreen(in);
                     break;
                 case STRONGERREDS:
                     in = transformStrongerReds(in);
@@ -241,83 +226,5 @@ public class ImageEditor {
             }
         }
         return in;
-    }
-
-    private static int transformThou(int in)
-    {
-        return in + 5000;
-    }
-
-    //format:  32 bit int > A R G B:  8,8,8,8
-    private static int transformBlueToRed(int in)
-    {
-        return in << 16;
-    }
-
-    private static int transformBlueToGreen(int in)
-    {
-        return in << 8;
-    }
-
-    private static int transformStrongerReds(int in)
-    {
-        int redOnly = (in >> 16) & 0xFF;
-        redOnly = Math.min(redOnly + 150, 255);
-        redOnly = redOnly << 16;
-        int stripRed = in & 0xFF00_FFFF;
-        return redOnly | stripRed;
-    }
-
-    private static int transformGrayscale(int in)
-    {
-        int r = (in >> 16) & 0xFF;
-        int g = (in >> 8) & 0xFF;
-        int b = in & 0xFF;
-        int gray = (r + g + b) / 3;
-        return (gray << 24) | (gray << 16) | (gray << 8) | (gray);
-    }
-
-    private static int transformIntensify(int in)
-    {
-        int r = (in >> 16) & 0xFF;
-        int g = (in >> 8) & 0xFF;
-        int b = in & 0xFF;
-        r = Math.min(r + 50, 255);
-        g = Math.min(g + 50, 255);
-        b = Math.min(b + 50, 255);
-        return (0xFF << 24) | (r << 16) | (g << 8) | (b);
-    }
-
-    private static int transformSwitchRG(int in)
-    {
-        int r = (in >> 16) & 0xFF;
-        int g = (in >> 8) & 0xFF;
-        int b = in & 0xFF;
-        r = Math.min(r + 50, 255);
-        g = Math.min(g + 50, 255);
-        b = Math.min(b + 50, 255);
-        return (0xFF << 24) | (g << 16) | (r << 8) | (b);
-    }
-
-    private static int transformSwitchRB(int in)
-    {
-        int r = (in >> 16) & 0xFF;
-        int g = (in >> 8) & 0xFF;
-        int b = in & 0xFF;
-        r = Math.min(r + 50, 255);
-        g = Math.min(g + 50, 255);
-        b = Math.min(b + 50, 255);
-        return (0xFF << 24) | (b << 16) | (g << 8) | (r);
-    }
-
-    private static int transformSwitchGB(int in)
-    {
-        int r = (in >> 16) & 0xFF;
-        int g = (in >> 8) & 0xFF;
-        int b = in & 0xFF;
-        r = Math.min(r + 50, 255);
-        g = Math.min(g + 50, 255);
-        b = Math.min(b + 50, 255);
-        return (0xFF << 24) | (r << 16) | (b << 8) | (g);
     }
 }
