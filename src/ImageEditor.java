@@ -113,6 +113,15 @@ public class ImageEditor {
                     pixels.add(image.getRGB(x,y));
                 }
                 int after = (pixels.get(0) & pixels.get(1));
+                if (Main.isDebugMode())
+                {
+                    for (int p : pixels)
+                    {
+                        Main.printInt(p);
+                    }
+                    System.out.println("avg into: ");
+                    Main.printInt(after);
+                }
                 output.setRGB(x,y,after);
                 //TODO how to bit-OR for N instead of 2 ?
             }
