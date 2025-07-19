@@ -25,15 +25,20 @@ public class ImageEditor {
     }
 
     public void selectTransformation(String inId) {
+        boolean found = false;
         for (colorShiftBase t : availableransformations)
         {
             if (t.getName().equalsIgnoreCase(inId))
             {
                 selectedTransformations.add(t);
+                found = true;
                 break;
             }
         }
-        System.out.println(inId + " is not a valid transformation.");
+        if (!found)
+        {
+            System.out.println(inId + " is not a valid transformation.");
+        }
     }
 
     public void listAvailableTransformations()
@@ -200,30 +205,7 @@ public class ImageEditor {
     {
         for (colorShiftBase t : selectedTransformations)
         {
-            switch (t)
-            {
-                case ADDFIVETHOUSAND:
-                    in = transformThou(in);
-                    break;
-                case STRONGERREDS:
-                    in = transformStrongerReds(in);
-                    break;
-                case GRAYSCALE:
-                    in = transformGrayscale(in);
-                    break;
-                case INTENSIFY:
-                    in = transformIntensify(in);
-                    break;
-                case SWITCHRB:
-                    in = transformSwitchRB(in);
-                    break;
-                case SWITCHRG:
-                    in = transformSwitchRG(in);
-                    break;
-                case SWITCHGB:
-                    in = transformSwitchGB(in);
-                    break;
-            }
+            in = t.shiftPixel(in);
         }
         return in;
     }
