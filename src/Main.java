@@ -1,8 +1,11 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.swing.*;
+import javax.swing.border.Border;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -11,11 +14,22 @@ public class Main {
     private static BufferedImage outputImage;
     private static ImageEditor editor;
     private static boolean debugMode = false;
+    private static final JFrame frame = new JFrame("BitWise Image Editor");
+    private static final JPanel imgPanel1 = new JPanel();
+    private static final JPanel imgPanel2 = new JPanel();
 
     public static void main(String[] args) {
         boolean running = true;
         boolean saved = false;
         boolean transformed = false;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                setupGUI();
+            }
+        });
+
+
         images = new ArrayList<>();
         imagesPaths = new ArrayList<>();
         outputImage = null;
@@ -40,6 +54,7 @@ public class Main {
                     {
                         running = false;
                         System.out.println("quitting.");
+                        frame.dispose();
                     }
                     break;
                 case "orify":
@@ -191,6 +206,38 @@ public class Main {
 
     }
 
+    private static void setupGUI()
+    {
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JButton button = new JButton("test button");
+        JLabel imageLabel1 = new JLabel("image 1");
+        JLabel imageLabel2 = new JLabel("image 2");
+        Dimension imageDimension = new Dimension(300,220);
+        Border line = BorderFactory.createLineBorder(new Color(0,0,0));
+        Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Border compound = BorderFactory.createCompoundBorder(padding, line);
+
+        imgPanel1.setPreferredSize(imageDimension);
+        imgPanel1.setBorder(compound);
+        imgPanel2.setPreferredSize(imageDimension);
+        imgPanel2.setBorder(compound);
+
+        imgPanel1.add(imageLabel1);
+        imgPanel2.add(imageLabel2);
+
+        frame.getContentPane().add(imgPanel1, BorderLayout.WEST);
+        frame.getContentPane().add(imgPanel2, BorderLayout.EAST);
+
+        frame.getContentPane().add(button, BorderLayout.SOUTH);
+
+        frame.pack();
+        frame.setVisible(true);
+
+        frame.setSize(new Dimension(640,480));
+        frame.setLocation(100,100);
+    }
+
     private static void selectTransformations()
     {
         String input = "";
@@ -249,6 +296,7 @@ public class Main {
         {
             images.add(ImageIO.read(inFile));
             imagesPaths.add(path);
+            updateGUIImages();
         }
         catch (Exception e)
         {
@@ -262,6 +310,30 @@ public class Main {
         else
         {
             System.out.println(">> load image failed for : " + path + ". You'll need to run 'load' again to proceed.");
+        }
+    }
+
+    private static void updateGUIImages()
+    {
+        if (!images.isEmpty())
+        {
+            imgPanel1.remove(0);
+            JLabel imageLabel = new JLabel();
+            ImageIcon imageIcon = new ImageIcon(imagesPaths.get(0));
+            imageLabel.setIcon(imageIcon);
+            imgPanel1.add(imageLabel);
+            imgPanel1.revalidate();
+            imgPanel1.repaint();
+        }
+        if (images.size() > 1)
+        {
+            imgPanel2.remove(0);
+            JLabel imageLabel = new JLabel();
+            ImageIcon imageIcon = new ImageIcon(imagesPaths.get(1));
+            imageLabel.setIcon(imageIcon);
+            imgPanel2.add(imageLabel);
+            imgPanel2.revalidate();
+            imgPanel2.repaint();
         }
     }
 
