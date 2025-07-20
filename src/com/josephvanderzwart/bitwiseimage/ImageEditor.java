@@ -17,7 +17,6 @@ public class ImageEditor {
         selectedTransformations = new ArrayList<>();
         availableransformations = new ArrayList<>();
         availableransformations.add(new shiftAddFiveThousand());
-        availableransformations.add(new shiftGreenBlue());
         availableransformations.add(new shiftGrayscale());
         availableransformations.add(new shiftIntensify());
         availableransformations.add(new shiftStrongerBlues());
@@ -25,6 +24,7 @@ public class ImageEditor {
         availableransformations.add(new shiftStrongerGreens());
         availableransformations.add(new shiftSwitchRedBlue());
         availableransformations.add(new shiftSwitchRedGreen());
+        availableransformations.add(new shiftSwitchGreenBlue());
     }
 
     public void selectTransformation(String inId) {
