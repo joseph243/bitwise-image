@@ -1,4 +1,4 @@
-package colorShifts;
+package com.josephvanderzwart.bitwiseimage.colorShifts;
 
 public class shiftAddFiveThousand implements colorShiftBase{
 

@@ -1,14 +1,11 @@
+package com.josephvanderzwart.bitwiseimage;
+
+import com.josephvanderzwart.bitwiseimage.SwingUI.GUIWindow;
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.swing.*;
-import javax.swing.border.Border;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -17,16 +14,13 @@ public class Main {
     private static BufferedImage outputImage;
     private static ImageEditor editor;
     private static boolean debugMode = false;
-    private static final JFrame frame = new JFrame("BitWise Image Editor");
-    private static final JPanel imgPanel1 = new JPanel();
-    private static final JPanel imgPanel2 = new JPanel();
-    private static final JPanel imgPanel3 = new JPanel();
     private static boolean saved = false;
     private static boolean transformed = false;
+    private static GUIWindow gui;
 
     public static void main(String[] args) {
         boolean running = true;
-        setupNewGUI();
+        gui = new GUIWindow();
         images = new ArrayList<>();
         imagesPaths = new ArrayList<>();
         outputImage = null;
@@ -53,7 +47,7 @@ public class Main {
                     if (!running)
                     {
                         System.out.println("quitting.");
-                        frame.dispose();
+                        gui.killGUI();
                     }
                     break;
                 case "orify":
@@ -198,7 +192,7 @@ public class Main {
 
     }
 
-    private static void resetActions() {
+    public static void resetActions() {
         images.clear();
         imagesPaths.clear();
         outputImage = null;
@@ -208,41 +202,6 @@ public class Main {
         transformed = false;
         updateGUIImages();
         System.out.println(">> data erased, app reset to new launch.");
-    }
-
-    private static void setupNewGUI()
-    {
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JButton resetButton = new JButton(new AbstractAction("RESET") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetActions();
-            }
-        });
-        JLabel imageLabel1 = new JLabel("image 1");
-        JLabel imageLabel2 = new JLabel("image 2");
-        JLabel imageLabel3 = new JLabel("output image");
-        Dimension imageDimension = new Dimension(300,220);
-        Border line = BorderFactory.createLineBorder(new Color(0,0,0));
-        Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-        Border compound = BorderFactory.createCompoundBorder(padding, line);
-        imgPanel1.setPreferredSize(imageDimension);
-        imgPanel1.setBorder(compound);
-        imgPanel2.setPreferredSize(imageDimension);
-        imgPanel2.setBorder(compound);
-        imgPanel3.setPreferredSize(imageDimension);
-        imgPanel3.setBorder(compound);
-        imgPanel1.add(imageLabel1);
-        imgPanel2.add(imageLabel2);
-        imgPanel3.add(imageLabel3);
-        frame.getContentPane().add(imgPanel1, BorderLayout.WEST);
-        frame.getContentPane().add(imgPanel2, BorderLayout.EAST);
-        frame.getContentPane().add(imgPanel3);
-        frame.getContentPane().add(resetButton, BorderLayout.SOUTH);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setSize(new Dimension(960,480));
-        frame.setLocation(100,100);
     }
 
     private static void selectTransformations()
@@ -325,49 +284,24 @@ public class Main {
     {
         if (images.isEmpty())
         {
-            imgPanel1.remove(0);
-            imgPanel2.remove(0);
-            JLabel imageLabel1 = new JLabel("image 1");
-            JLabel imageLabel2 = new JLabel("image 2");
-            imgPanel1.add(imageLabel1);
-            imgPanel2.add(imageLabel2);
+            gui.clearInputImages();
         }
         if (!images.isEmpty())
         {
-            imgPanel1.remove(0);
-            JLabel imageLabel = new JLabel();
-            ImageIcon imageIcon = new ImageIcon(imagesPaths.get(0));
-            imageLabel.setIcon(imageIcon);
-            imgPanel1.add(imageLabel);
+            gui.setImage1(imagesPaths.get(0));
         }
         if (images.size() > 1)
         {
-            imgPanel2.remove(0);
-            JLabel imageLabel = new JLabel();
-            ImageIcon imageIcon = new ImageIcon(imagesPaths.get(1));
-            imageLabel.setIcon(imageIcon);
-            imgPanel2.add(imageLabel);
+            gui.setImage2(imagesPaths.get(1));
         }
         if (outputImage != null)
         {
-            imgPanel3.remove(0);
-            JLabel imageLabel = new JLabel();
-            ImageIcon imageIcon = new ImageIcon(outputImage);
-            imageLabel.setIcon(imageIcon);
-            imgPanel3.add(imageLabel);
+            gui.setImageOutput(outputImage);
         }
         else
         {
-            imgPanel3.remove(0);
-            JLabel imageLabel = new JLabel("output image");
-            imgPanel3.add(imageLabel);
+            gui.clearOutputImage();
         }
-        imgPanel1.revalidate();
-        imgPanel1.repaint();
-        imgPanel2.revalidate();
-        imgPanel2.repaint();
-        imgPanel3.revalidate();
-        imgPanel3.repaint();
     }
 
     private static boolean saveImage()

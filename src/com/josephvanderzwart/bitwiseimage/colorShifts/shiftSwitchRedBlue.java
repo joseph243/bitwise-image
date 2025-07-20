@@ -1,6 +1,6 @@
-package colorShifts;
+package com.josephvanderzwart.bitwiseimage.colorShifts;
 
-public class shiftIntensify implements colorShiftBase{
+public class shiftSwitchRedBlue implements colorShiftBase{
 
     @Override
     public int shiftPixel(int inPixel) {
@@ -10,11 +10,11 @@ public class shiftIntensify implements colorShiftBase{
         r = Math.min(r + 50, 255);
         g = Math.min(g + 50, 255);
         b = Math.min(b + 50, 255);
-        return (0xFF << 24) | (r << 16) | (g << 8) | (b);
+        return (0xFF << 24) | (b << 16) | (g << 8) | (r);
     }
 
     @Override
     public String getName() {
-        return "Intensify";
+        return "Switch Red-Blue";
     }
 }

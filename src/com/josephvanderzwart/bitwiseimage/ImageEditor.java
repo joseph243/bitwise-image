@@ -1,4 +1,6 @@
-import colorShifts.*;
+package com.josephvanderzwart.bitwiseimage;
+
+import com.josephvanderzwart.bitwiseimage.colorShifts.*;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
