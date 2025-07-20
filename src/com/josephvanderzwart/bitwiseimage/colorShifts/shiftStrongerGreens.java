@@ -5,7 +5,7 @@ public class shiftStrongerGreens implements colorShiftBase{
     @Override
     public int shiftPixel(int inPixel) {
         int greenOnly = (inPixel >> 8) & 0xFF;
-        greenOnly = Math.min(greenOnly + 150, 255);
+        greenOnly = Math.min(greenOnly + 50, 255);
         greenOnly = greenOnly << 8;
         int stripGreen = inPixel & 0xFFFF_00FF;
         return greenOnly | stripGreen;
