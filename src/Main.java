@@ -22,14 +22,7 @@ public class Main {
         boolean running = true;
         boolean saved = false;
         boolean transformed = false;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setupGUI();
-            }
-        });
-
-
+        setupGUI();
         images = new ArrayList<>();
         imagesPaths = new ArrayList<>();
         outputImage = null;
@@ -53,6 +46,9 @@ public class Main {
                     else
                     {
                         running = false;
+                    }
+                    if (!running)
+                    {
                         System.out.println("quitting.");
                         frame.dispose();
                     }
