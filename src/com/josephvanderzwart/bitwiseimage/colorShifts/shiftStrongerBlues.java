@@ -4,12 +4,14 @@ public class shiftStrongerBlues implements colorShiftBase{
 
     @Override
     public int shiftPixel(int inPixel) {
-        //TODO ???
-        return 0;
+        int blueOnly = inPixel & 0xFF;
+        blueOnly = Math.min(blueOnly + 150, 255);
+        int stripBlue = inPixel & 0xFFFF_FF00;
+        return blueOnly | stripBlue;
     }
 
     @Override
     public String getName() {
-        return "";
+        return "Stronger Blues";
     }
 }

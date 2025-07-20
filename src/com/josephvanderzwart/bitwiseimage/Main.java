@@ -112,6 +112,7 @@ public class Main {
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'half' transform complete.");
+                        updateGUIImages();
                     }
                     else
                     {
