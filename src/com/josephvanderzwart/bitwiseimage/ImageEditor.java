@@ -22,6 +22,7 @@ public class ImageEditor {
         availableransformations.add(new shiftIntensify());
         availableransformations.add(new shiftStrongerBlues());
         availableransformations.add(new shiftStrongerReds());
+        availableransformations.add(new shiftStrongerGreens());
         availableransformations.add(new shiftSwitchRedBlue());
         availableransformations.add(new shiftSwitchRedGreen());
     }
