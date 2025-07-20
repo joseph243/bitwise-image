@@ -1,4 +1,4 @@
-package colorShifts;
+package com.josephvanderzwart.bitwiseimage.colorShifts;
 
 public interface colorShiftBase {
     public abstract int shiftPixel(int inPixel);

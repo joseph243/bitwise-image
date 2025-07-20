@@ -1,3 +1,6 @@
+package com.josephvanderzwart.bitwiseimage;
+
+import com.josephvanderzwart.bitwiseimage.SwingUI.GUIWindow;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,16 +14,17 @@ public class Main {
     private static BufferedImage outputImage;
     private static ImageEditor editor;
     private static boolean debugMode = false;
+    private static boolean saved = false;
+    private static boolean transformed = false;
+    private static GUIWindow gui;
 
     public static void main(String[] args) {
         boolean running = true;
-        boolean saved = false;
-        boolean transformed = false;
+        gui = new GUIWindow();
         images = new ArrayList<>();
         imagesPaths = new ArrayList<>();
         outputImage = null;
         editor = new ImageEditor();
-
         while (running) {
             printMenu(images.size(), transformed, saved);
             String input = scanner.nextLine();
@@ -39,7 +43,11 @@ public class Main {
                     else
                     {
                         running = false;
+                    }
+                    if (!running)
+                    {
                         System.out.println("quitting.");
+                        gui.killGUI();
                     }
                     break;
                 case "orify":
@@ -70,7 +78,6 @@ public class Main {
                     break;
                 case "load":
                     loadImage();
-                    saved = false;
                     break;
                 case "debug":
                     debugMode = !debugMode;
@@ -105,6 +112,7 @@ public class Main {
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'half' transform complete.");
+                        updateGUIImages();
                     }
                     else
                     {
@@ -120,6 +128,7 @@ public class Main {
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'full' transform complete.");
+                        updateGUIImages();
                     }
                     else
                     {
@@ -144,14 +153,7 @@ public class Main {
                     testNumbers();
                     break;
                 case "reset":
-                    images.clear();
-                    imagesPaths.clear();
-                    outputImage = null;
-                    editor = new ImageEditor();
-                    debugMode = false;
-                    saved = false;
-                    transformed = false;
-                    System.out.println(">> data erased, app reset to new launch.");
+                    resetActions();
                     break;
                 case "list":
                     System.out.println("Loaded Images:");
@@ -189,6 +191,18 @@ public class Main {
             }
         }
 
+    }
+
+    public static void resetActions() {
+        images.clear();
+        imagesPaths.clear();
+        outputImage = null;
+        editor = new ImageEditor();
+        debugMode = false;
+        saved = false;
+        transformed = false;
+        updateGUIImages();
+        System.out.println(">> data erased, app reset to new launch.");
     }
 
     private static void selectTransformations()
@@ -249,6 +263,8 @@ public class Main {
         {
             images.add(ImageIO.read(inFile));
             imagesPaths.add(path);
+            updateGUIImages();
+            saved = false;
         }
         catch (Exception e)
         {
@@ -262,6 +278,30 @@ public class Main {
         else
         {
             System.out.println(">> load image failed for : " + path + ". You'll need to run 'load' again to proceed.");
+        }
+    }
+
+    private static void updateGUIImages()
+    {
+        if (images.isEmpty())
+        {
+            gui.clearInputImages();
+        }
+        if (!images.isEmpty())
+        {
+            gui.setImage1(imagesPaths.get(0));
+        }
+        if (images.size() > 1)
+        {
+            gui.setImage2(imagesPaths.get(1));
+        }
+        if (outputImage != null)
+        {
+            gui.setImageOutput(outputImage);
+        }
+        else
+        {
+            gui.clearOutputImage();
         }
     }
 
