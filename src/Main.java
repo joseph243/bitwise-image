@@ -20,6 +20,7 @@ public class Main {
     private static final JFrame frame = new JFrame("BitWise Image Editor");
     private static final JPanel imgPanel1 = new JPanel();
     private static final JPanel imgPanel2 = new JPanel();
+    private static final JPanel imgPanel3 = new JPanel();
     private static boolean saved = false;
     private static boolean transformed = false;
 
@@ -83,7 +84,6 @@ public class Main {
                     break;
                 case "load":
                     loadImage();
-                    saved = false;
                     break;
                 case "debug":
                     debugMode = !debugMode;
@@ -133,6 +133,7 @@ public class Main {
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'full' transform complete.");
+                        updateGUIImages();
                     }
                     else
                     {
@@ -220,6 +221,7 @@ public class Main {
         });
         JLabel imageLabel1 = new JLabel("image 1");
         JLabel imageLabel2 = new JLabel("image 2");
+        JLabel imageLabel3 = new JLabel("output image");
         Dimension imageDimension = new Dimension(300,220);
         Border line = BorderFactory.createLineBorder(new Color(0,0,0));
         Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -228,14 +230,18 @@ public class Main {
         imgPanel1.setBorder(compound);
         imgPanel2.setPreferredSize(imageDimension);
         imgPanel2.setBorder(compound);
+        imgPanel3.setPreferredSize(imageDimension);
+        imgPanel3.setBorder(compound);
         imgPanel1.add(imageLabel1);
         imgPanel2.add(imageLabel2);
+        imgPanel3.add(imageLabel3);
         frame.getContentPane().add(imgPanel1, BorderLayout.WEST);
         frame.getContentPane().add(imgPanel2, BorderLayout.EAST);
+        frame.getContentPane().add(imgPanel3);
         frame.getContentPane().add(resetButton, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
-        frame.setSize(new Dimension(640,480));
+        frame.setSize(new Dimension(960,480));
         frame.setLocation(100,100);
     }
 
@@ -298,6 +304,7 @@ public class Main {
             images.add(ImageIO.read(inFile));
             imagesPaths.add(path);
             updateGUIImages();
+            saved = false;
         }
         catch (Exception e)
         {
@@ -341,10 +348,26 @@ public class Main {
             imageLabel.setIcon(imageIcon);
             imgPanel2.add(imageLabel);
         }
+        if (outputImage != null)
+        {
+            imgPanel3.remove(0);
+            JLabel imageLabel = new JLabel();
+            ImageIcon imageIcon = new ImageIcon(outputImage);
+            imageLabel.setIcon(imageIcon);
+            imgPanel3.add(imageLabel);
+        }
+        else
+        {
+            imgPanel3.remove(0);
+            JLabel imageLabel = new JLabel("output image");
+            imgPanel3.add(imageLabel);
+        }
         imgPanel1.revalidate();
         imgPanel1.repaint();
         imgPanel2.revalidate();
         imgPanel2.repaint();
+        imgPanel3.revalidate();
+        imgPanel3.repaint();
     }
 
     private static boolean saveImage()
