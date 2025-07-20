@@ -1,6 +1,9 @@
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -17,17 +20,16 @@ public class Main {
     private static final JFrame frame = new JFrame("BitWise Image Editor");
     private static final JPanel imgPanel1 = new JPanel();
     private static final JPanel imgPanel2 = new JPanel();
+    private static boolean saved = false;
+    private static boolean transformed = false;
 
     public static void main(String[] args) {
         boolean running = true;
-        boolean saved = false;
-        boolean transformed = false;
-        setupGUI();
+        setupNewGUI();
         images = new ArrayList<>();
         imagesPaths = new ArrayList<>();
         outputImage = null;
         editor = new ImageEditor();
-
         while (running) {
             printMenu(images.size(), transformed, saved);
             String input = scanner.nextLine();
@@ -155,14 +157,7 @@ public class Main {
                     testNumbers();
                     break;
                 case "reset":
-                    images.clear();
-                    imagesPaths.clear();
-                    outputImage = null;
-                    editor = new ImageEditor();
-                    debugMode = false;
-                    saved = false;
-                    transformed = false;
-                    System.out.println(">> data erased, app reset to new launch.");
+                    resetActions();
                     break;
                 case "list":
                     System.out.println("Loaded Images:");
@@ -202,34 +197,44 @@ public class Main {
 
     }
 
-    private static void setupGUI()
+    private static void resetActions() {
+        images.clear();
+        imagesPaths.clear();
+        outputImage = null;
+        editor = new ImageEditor();
+        debugMode = false;
+        saved = false;
+        transformed = false;
+        updateGUIImages();
+        System.out.println(">> data erased, app reset to new launch.");
+    }
+
+    private static void setupNewGUI()
     {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        JButton button = new JButton("test button");
+        JButton resetButton = new JButton(new AbstractAction("RESET") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetActions();
+            }
+        });
         JLabel imageLabel1 = new JLabel("image 1");
         JLabel imageLabel2 = new JLabel("image 2");
         Dimension imageDimension = new Dimension(300,220);
         Border line = BorderFactory.createLineBorder(new Color(0,0,0));
         Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         Border compound = BorderFactory.createCompoundBorder(padding, line);
-
         imgPanel1.setPreferredSize(imageDimension);
         imgPanel1.setBorder(compound);
         imgPanel2.setPreferredSize(imageDimension);
         imgPanel2.setBorder(compound);
-
         imgPanel1.add(imageLabel1);
         imgPanel2.add(imageLabel2);
-
         frame.getContentPane().add(imgPanel1, BorderLayout.WEST);
         frame.getContentPane().add(imgPanel2, BorderLayout.EAST);
-
-        frame.getContentPane().add(button, BorderLayout.SOUTH);
-
+        frame.getContentPane().add(resetButton, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
-
         frame.setSize(new Dimension(640,480));
         frame.setLocation(100,100);
     }
@@ -311,6 +316,15 @@ public class Main {
 
     private static void updateGUIImages()
     {
+        if (images.isEmpty())
+        {
+            imgPanel1.remove(0);
+            imgPanel2.remove(0);
+            JLabel imageLabel1 = new JLabel("image 1");
+            JLabel imageLabel2 = new JLabel("image 2");
+            imgPanel1.add(imageLabel1);
+            imgPanel2.add(imageLabel2);
+        }
         if (!images.isEmpty())
         {
             imgPanel1.remove(0);
@@ -318,8 +332,6 @@ public class Main {
             ImageIcon imageIcon = new ImageIcon(imagesPaths.get(0));
             imageLabel.setIcon(imageIcon);
             imgPanel1.add(imageLabel);
-            imgPanel1.revalidate();
-            imgPanel1.repaint();
         }
         if (images.size() > 1)
         {
@@ -328,9 +340,11 @@ public class Main {
             ImageIcon imageIcon = new ImageIcon(imagesPaths.get(1));
             imageLabel.setIcon(imageIcon);
             imgPanel2.add(imageLabel);
-            imgPanel2.revalidate();
-            imgPanel2.repaint();
         }
+        imgPanel1.revalidate();
+        imgPanel1.repaint();
+        imgPanel2.revalidate();
+        imgPanel2.repaint();
     }
 
     private static boolean saveImage()
