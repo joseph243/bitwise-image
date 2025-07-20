@@ -47,12 +47,7 @@ public class GUIWindow {
         imgPanel1.remove(0);
         JLabel imageLabel = new JLabel();
         ImageIcon imageIcon = new ImageIcon(inPath);
-        if (imageIcon.getIconHeight() > 220 || imageIcon.getIconWidth() > 300)
-        {
-            Image i = imageIcon.getImage();
-            Image scaled = i.getScaledInstance(280, 200, Image.SCALE_DEFAULT);
-            imageIcon.setImage(scaled);
-        }
+        imageIcon = scaleImage(imageIcon);
         imageLabel.setIcon(imageIcon);
         imgPanel1.add(imageLabel);
         imgPanel1.revalidate();
@@ -64,12 +59,7 @@ public class GUIWindow {
         imgPanel2.remove(0);
         JLabel imageLabel = new JLabel();
         ImageIcon imageIcon = new ImageIcon(inPath);
-        if (imageIcon.getIconHeight() > 220 || imageIcon.getIconWidth() > 300)
-        {
-            Image i = imageIcon.getImage();
-            Image scaled = i.getScaledInstance(280, 200, Image.SCALE_DEFAULT);
-            imageIcon.setImage(scaled);
-        }
+        imageIcon = scaleImage(imageIcon);
         imageLabel.setIcon(imageIcon);
         imgPanel2.add(imageLabel);
         imgPanel2.revalidate();
@@ -81,12 +71,7 @@ public class GUIWindow {
         imgPanel3.remove(0);
         JLabel imageLabel = new JLabel();
         ImageIcon imageIcon = new ImageIcon(inImage);
-        if (imageIcon.getIconHeight() > 220 || imageIcon.getIconWidth() > 300)
-        {
-            Image i = imageIcon.getImage();
-            Image scaled = i.getScaledInstance(280, 200, Image.SCALE_DEFAULT);
-            imageIcon.setImage(scaled);
-        }
+        imageIcon = scaleImage(imageIcon);
         imageLabel.setIcon(imageIcon);
         imgPanel3.add(imageLabel);
         imgPanel3.revalidate();
@@ -126,6 +111,20 @@ public class GUIWindow {
         frame.setVisible(true);
         frame.setSize(new Dimension(960,480));
         frame.setLocation(100,100);
+    }
+
+    private ImageIcon scaleImage(ImageIcon inImageIcon)
+    {
+        if (inImageIcon.getIconHeight() > 220 || inImageIcon.getIconWidth() > 300)
+        {
+            Image i = inImageIcon.getImage();
+            Image scaled = i.getScaledInstance(278, 200, Image.SCALE_DEFAULT);
+            return new ImageIcon(scaled);
+        }
+        else
+        {
+            return inImageIcon;
+        }
     }
 
     public void killGUI()
