@@ -8,9 +8,9 @@ import java.util.Random;
 
 public class ImageEditor {
 
-    private ArrayList<colorShiftBase> selectedTransformations;
+    private ArrayList<ColorShiftBase> selectedTransformations;
 
-    private ArrayList<colorShiftBase> availableransformations;
+    private ArrayList<ColorShiftBase> availableransformations;
 
     public ImageEditor()
     {
@@ -27,9 +27,9 @@ public class ImageEditor {
         availableransformations.add(new shiftSwitchGreenBlue());
     }
 
-    public void selectTransformation(String inId) {
+    public boolean selectTransformation(String inId) {
         boolean found = false;
-        for (colorShiftBase t : availableransformations)
+        for (ColorShiftBase t : availableransformations)
         {
             if (t.getName().equalsIgnoreCase(inId))
             {
@@ -42,15 +42,21 @@ public class ImageEditor {
         {
             System.out.println(inId + " is not a valid transformation.");
         }
+        return found;
     }
 
     public void listAvailableTransformations()
     {
-        for (colorShiftBase t : availableransformations)
+        for (ColorShiftBase t : availableransformations)
         {
             System.out.print(t.getName() + ", ");
         }
         System.out.println();
+    }
+
+    public ArrayList<ColorShiftBase> getSelectedTransformations()
+    {
+        return selectedTransformations;
     }
 
     public BufferedImage orify(ArrayList<BufferedImage> inImages)
@@ -206,7 +212,7 @@ public class ImageEditor {
 
     private int doAllSelectedTransformations(int in)
     {
-        for (colorShiftBase t : selectedTransformations)
+        for (ColorShiftBase t : selectedTransformations)
         {
             in = t.shiftPixel(in);
         }

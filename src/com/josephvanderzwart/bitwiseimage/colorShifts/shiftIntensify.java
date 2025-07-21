@@ -1,6 +1,6 @@
 package com.josephvanderzwart.bitwiseimage.colorShifts;
 
-public class shiftIntensify implements colorShiftBase{
+public class shiftIntensify implements ColorShiftBase {
 
     @Override
     public int shiftPixel(int inPixel) {

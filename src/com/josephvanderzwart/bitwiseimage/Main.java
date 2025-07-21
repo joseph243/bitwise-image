@@ -202,6 +202,7 @@ public class Main {
         saved = false;
         transformed = false;
         updateGUIImages();
+        gui.resetListOfActiveTransformations();
         System.out.println(">> data erased, app reset to new launch.");
     }
 
@@ -216,7 +217,11 @@ public class Main {
             input = scanner.nextLine();
             if (!input.equalsIgnoreCase("done"))
             {
-                editor.selectTransformation(input);
+                boolean valid = editor.selectTransformation(input);
+                if (valid)
+                {
+                    gui.setListOfActiveTransformations(editor.getSelectedTransformations());
+                }
             }
         }
     }
