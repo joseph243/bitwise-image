@@ -105,13 +105,9 @@ public class GUIWindow {
         frame.setLocation(100,100);
         primaryPanel.setLayout(new GridLayout(3,3));
         frame.add(primaryPanel);
-
-        //frame.getContentPane().add(resetButton, BorderLayout.SOUTH);
-
         JLabel imageLabel1 = new JLabel("image 1");
         JLabel imageLabel2 = new JLabel("image 2");
         JLabel imageLabel3 = new JLabel("output image");
-        JLabel outputSectionLabel = new JLabel("output container");
         Border line = BorderFactory.createLineBorder(new Color(0,0,0));
         Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         Border compound = BorderFactory.createCompoundBorder(padding, line);
@@ -124,14 +120,12 @@ public class GUIWindow {
         imgPanel1.add(imageLabel1);
         imgPanel2.add(imageLabel2);
         imgPanel3.add(imageLabel3);
-        panel4.add(new JLabel("4"), BorderLayout.NORTH);
-        panel6.add(new JLabel("6"), BorderLayout.NORTH);
-        panel7.add(new JLabel("7"), BorderLayout.NORTH);
-        panel8.add(new JLabel("8"), BorderLayout.NORTH);
-        panel9.add(new JLabel("9"), BorderLayout.NORTH);
-
+        panel4.add(new JLabel("4"), BorderLayout.CENTER);
+        panel6.add(new JLabel("6"), BorderLayout.CENTER);
+        panel7.add(new JLabel("7"), BorderLayout.CENTER);
+        panel8.add(new JLabel("8"), BorderLayout.CENTER);
+        panel9.add(new JLabel("9"), BorderLayout.CENTER);
         panel7.add(resetButton, BorderLayout.SOUTH);
-
         primaryPanel.add(imgPanel1);
         primaryPanel.add(imgPanel2);
         primaryPanel.add(imgPanel3);
@@ -168,7 +162,7 @@ public class GUIWindow {
         textList += "</html>";
         JLabel label = new JLabel(textList);
         panel5.removeAll();
-        panel5.add(label);
+        panel5.add(label, BorderLayout.CENTER);
         panel5.revalidate();
         panel5.repaint();
     }
