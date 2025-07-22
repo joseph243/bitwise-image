@@ -125,20 +125,7 @@ public class Main {
                     }
                     break;
                 case "full":
-                    if (!images.isEmpty())
-                    {
-                        System.out.println(">> starting 'full' transform.");
-                        selectTransformations();
-                        outputImage = editor.full(images.getFirst());
-                        transformed = true;
-                        saved = false;
-                        System.out.println(">> 'full' transform complete.");
-                        updateGUIImages();
-                    }
-                    else
-                    {
-                        System.out.println("no image is loaded!  use 'load' command.");
-                    }
+                    fullTransformAction();
                     break;
                 case "chaos":
                     if (!images.isEmpty())
@@ -197,6 +184,23 @@ public class Main {
             }
         }
 
+    }
+
+    public static void fullTransformAction()
+    {
+        if (!images.isEmpty() && outputImage == null)
+        {
+            System.out.println(">> starting 'full' transform.");
+            outputImage = editor.full(images.getFirst());
+            transformed = true;
+            saved = false;
+            System.out.println(">> 'full' transform complete.");
+            updateGUIImages();
+        }
+        else
+        {
+            System.out.println("no image is loaded!  use 'load' command.");
+        }
     }
 
     public static void resetActions() {
@@ -324,6 +328,7 @@ public class Main {
     public static void addTransform(String inId)
     {
         editor.selectTransformation(inId);
+        gui.setListOfActiveTransformations(editor.getSelectedTransformations());
     }
 
     private static boolean saveImage()

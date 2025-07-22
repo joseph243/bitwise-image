@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -33,10 +34,9 @@ public class GUIWindow {
 
     public GUIWindow()
     {
-        buildButtons();
-        buildTransformButtons();
         setupGUIBase();
         setupGUIImagePanels();
+        setupGUIActionPanel();
         resetListOfActiveTransformations();
         setupGUITransformButtonsPanel();
         setupGUIExtraPanels();
@@ -47,6 +47,7 @@ public class GUIWindow {
 
     private void setupGUITransformButtonsPanel()
     {
+        buildTransformButtons();
         panel5.setLayout(new BoxLayout(panel5, BoxLayout.Y_AXIS));
         for (JButton b : transformButtons)
         {
@@ -66,22 +67,6 @@ public class GUIWindow {
             });
             transformButtons.add(button);
         }
-    }
-
-    private void buildButtons()
-    {
-        resetButton = new JButton(new AbstractAction("RESET") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.resetActions();
-            }
-        });
-        loadButton = new JButton(new AbstractAction("LOAD IMAGE") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadActions();
-            }
-        });
     }
 
     public void clearInputImages()
@@ -179,6 +164,18 @@ public class GUIWindow {
         filePathInputField.setMaximumSize(new Dimension(250, 25));
         filePathInputField.setMinimumSize(new Dimension(250, 25));
         filePathInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        filePathInputField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                loadActions();
+            }
+        });
+        loadButton = new JButton(new AbstractAction("LOAD IMAGE") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadActions();
+            }
+        });
         loadButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         fileLoadResponse.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel4.setLayout(new BoxLayout(panel4, BoxLayout.Y_AXIS));
@@ -187,15 +184,31 @@ public class GUIWindow {
         panel4.add(fileLoadResponse);
     }
 
+    private void setupGUIActionPanel()
+    {
+        JButton goButton = new JButton(new AbstractAction("~TRANSFORM~") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.fullTransformAction();
+            }
+        });
+        panel8.add(goButton, BorderLayout.CENTER);
+    }
+
     private void setupGUIExtraPanels()
     {
         panel7.add(new JLabel("7"), BorderLayout.CENTER);
-        panel8.add(new JLabel("8"), BorderLayout.CENTER);
         panel9.add(new JLabel("9"), BorderLayout.CENTER);
     }
 
     private void setupGUIResetPanel()
     {
+        resetButton = new JButton(new AbstractAction("RESET") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.resetActions();
+            }
+        });
         panel7.add(resetButton, BorderLayout.SOUTH);
     }
 
