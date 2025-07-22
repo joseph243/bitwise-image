@@ -1,6 +1,8 @@
 package com.josephvanderzwart.bitwiseimage;
 
 import com.josephvanderzwart.bitwiseimage.SwingUI.GUIWindow;
+import com.josephvanderzwart.bitwiseimage.colorShifts.ColorShiftBase;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,7 +14,7 @@ public class Main {
     private static ArrayList<BufferedImage> images;
     private static ArrayList<String> imagesPaths;
     private static BufferedImage outputImage;
-    private static ImageEditor editor;
+    private static ImageEditor editor = new ImageEditor();
     private static boolean debugMode = false;
     private static boolean saved = false;
     private static boolean transformed = false;
@@ -24,7 +26,6 @@ public class Main {
         images = new ArrayList<>();
         imagesPaths = new ArrayList<>();
         outputImage = null;
-        editor = new ImageEditor();
         while (running) {
             printMenu(images.size(), transformed, saved);
             String input = scanner.nextLine();
@@ -59,6 +60,7 @@ public class Main {
                     {
                         outputImage = editor.orify(images);
                         System.out.println(">>OR-ify transformation complete.");
+                        updateGUIImages();
                         transformed = true;
                         saved = false;
                     }
@@ -72,12 +74,15 @@ public class Main {
                     {
                         outputImage = editor.andify(images);
                         System.out.println(">>AND-ify transformation complete.");
+                        updateGUIImages();
                         transformed = true;
                         saved = false;
                     }
                     break;
                 case "load":
-                    loadImage();
+                    System.out.print(">> source image? ");
+                    String userPath = scanner.nextLine();
+                    loadImage(userPath);
                     break;
                 case "debug":
                     debugMode = !debugMode;
@@ -120,20 +125,7 @@ public class Main {
                     }
                     break;
                 case "full":
-                    if (!images.isEmpty())
-                    {
-                        System.out.println(">> starting 'full' transform.");
-                        selectTransformations();
-                        outputImage = editor.full(images.getFirst());
-                        transformed = true;
-                        saved = false;
-                        System.out.println(">> 'full' transform complete.");
-                        updateGUIImages();
-                    }
-                    else
-                    {
-                        System.out.println("no image is loaded!  use 'load' command.");
-                    }
+                    fullTransformAction();
                     break;
                 case "chaos":
                     if (!images.isEmpty())
@@ -143,6 +135,7 @@ public class Main {
                         transformed = true;
                         saved = false;
                         System.out.println(">> 'chaos' transform complete.");
+                        updateGUIImages();
                     }
                     else
                     {
@@ -193,6 +186,23 @@ public class Main {
 
     }
 
+    public static void fullTransformAction()
+    {
+        if (!images.isEmpty() && outputImage == null)
+        {
+            System.out.println(">> starting 'full' transform.");
+            outputImage = editor.full(images.getFirst());
+            transformed = true;
+            saved = false;
+            System.out.println(">> 'full' transform complete.");
+            updateGUIImages();
+        }
+        else
+        {
+            System.out.println("no image is loaded!  use 'load' command.");
+        }
+    }
+
     public static void resetActions() {
         images.clear();
         imagesPaths.clear();
@@ -202,6 +212,7 @@ public class Main {
         saved = false;
         transformed = false;
         updateGUIImages();
+        gui.resetListOfActiveTransformations();
         System.out.println(">> data erased, app reset to new launch.");
     }
 
@@ -216,7 +227,11 @@ public class Main {
             input = scanner.nextLine();
             if (!input.equalsIgnoreCase("done"))
             {
-                editor.selectTransformation(input);
+                boolean valid = editor.selectTransformation(input);
+                if (valid)
+                {
+                    gui.setListOfActiveTransformations(editor.getSelectedTransformations());
+                }
             }
         }
     }
@@ -244,19 +259,17 @@ public class Main {
         printInt(aa | 0xFF);
     }
 
-    private static void loadImage()
+    public static boolean loadImage(String inPath)
     {
         File inFile = null;
-        System.out.print(">> source image? ");
-        String userPath = scanner.nextLine();
         String path = "";
-        if (userPath.equalsIgnoreCase("t"))
+        if (inPath.equalsIgnoreCase("t"))
         {
             path = "/home/joe/Pictures/memes/us.png";
         }
         else
         {
-            path = userPath;
+            path = inPath;
         }
         inFile = new File(path);
         try
@@ -274,10 +287,12 @@ public class Main {
         {
             System.out.println(">> input file exists: " + path);
             System.out.println(">> load image success: " + images.getFirst().getWidth() + " x " + images.getFirst().getHeight() + " pixels.");
+            return true;
         }
         else
         {
             System.out.println(">> load image failed for : " + path + ". You'll need to run 'load' again to proceed.");
+            return false;
         }
     }
 
@@ -303,6 +318,17 @@ public class Main {
         {
             gui.clearOutputImage();
         }
+    }
+
+    public static ArrayList<ColorShiftBase> getAvailableTransformations()
+    {
+        return editor.getAvailableTransformations();
+    }
+
+    public static void addTransform(String inId)
+    {
+        editor.selectTransformation(inId);
+        gui.setListOfActiveTransformations(editor.getSelectedTransformations());
     }
 
     private static boolean saveImage()

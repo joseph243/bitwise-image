@@ -8,28 +8,29 @@ import java.util.Random;
 
 public class ImageEditor {
 
-    private ArrayList<colorShiftBase> selectedTransformations;
+    private ArrayList<ColorShiftBase> selectedTransformations;
 
-    private ArrayList<colorShiftBase> availableransformations;
+    private ArrayList<ColorShiftBase> availabletransformations;
 
     public ImageEditor()
     {
         selectedTransformations = new ArrayList<>();
-        availableransformations = new ArrayList<>();
-        availableransformations.add(new shiftAddFiveThousand());
-        availableransformations.add(new shiftGrayscale());
-        availableransformations.add(new shiftIntensify());
-        availableransformations.add(new shiftStrongerBlues());
-        availableransformations.add(new shiftStrongerReds());
-        availableransformations.add(new shiftStrongerGreens());
-        availableransformations.add(new shiftSwitchRedBlue());
-        availableransformations.add(new shiftSwitchRedGreen());
-        availableransformations.add(new shiftSwitchGreenBlue());
+        availabletransformations = new ArrayList<>();
+        availabletransformations.add(new shiftAddFiveThousand());
+        availabletransformations.add(new shiftGrayscale());
+        availabletransformations.add(new shiftIntensify());
+        availabletransformations.add(new shiftStrongerBlues());
+        availabletransformations.add(new shiftStrongerReds());
+        availabletransformations.add(new shiftStrongerGreens());
+        availabletransformations.add(new shiftSwitchRedBlue());
+        availabletransformations.add(new shiftSwitchRedGreen());
+        availabletransformations.add(new shiftSwitchGreenBlue());
+        availabletransformations.add(new shiftYellowfy());
     }
 
-    public void selectTransformation(String inId) {
+    public boolean selectTransformation(String inId) {
         boolean found = false;
-        for (colorShiftBase t : availableransformations)
+        for (ColorShiftBase t : availabletransformations)
         {
             if (t.getName().equalsIgnoreCase(inId))
             {
@@ -42,15 +43,26 @@ public class ImageEditor {
         {
             System.out.println(inId + " is not a valid transformation.");
         }
+        return found;
     }
 
     public void listAvailableTransformations()
     {
-        for (colorShiftBase t : availableransformations)
+        for (ColorShiftBase t : availabletransformations)
         {
             System.out.print(t.getName() + ", ");
         }
         System.out.println();
+    }
+
+    public ArrayList<ColorShiftBase> getAvailableTransformations()
+    {
+        return availabletransformations;
+    }
+
+    public ArrayList<ColorShiftBase> getSelectedTransformations()
+    {
+        return selectedTransformations;
     }
 
     public BufferedImage orify(ArrayList<BufferedImage> inImages)
@@ -198,15 +210,15 @@ public class ImageEditor {
     private int doRandomTransformation(int in)
     {
         Random r = new Random();
-        int random = r.nextInt(availableransformations.size());
+        int random = r.nextInt(availabletransformations.size());
         selectedTransformations.clear();
-        selectedTransformations.add(availableransformations.get(random));
+        selectedTransformations.add(availabletransformations.get(random));
         return doAllSelectedTransformations(in);
     }
 
     private int doAllSelectedTransformations(int in)
     {
-        for (colorShiftBase t : selectedTransformations)
+        for (ColorShiftBase t : selectedTransformations)
         {
             in = t.shiftPixel(in);
         }
