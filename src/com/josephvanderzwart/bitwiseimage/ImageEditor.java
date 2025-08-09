@@ -26,6 +26,7 @@ public class ImageEditor {
         availabletransformations.add(new shiftSwitchRedGreen());
         availabletransformations.add(new shiftSwitchGreenBlue());
         availabletransformations.add(new shiftYellowfy());
+        availabletransformations.add(new shiftNotify());
     }
 
     public boolean selectTransformation(String inId) {
